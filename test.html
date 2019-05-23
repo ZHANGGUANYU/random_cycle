@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            width: 400px;
+            height: 400px;
+            background-color: #ccc;
+            margin: 0 auto;
+            position: relative;
+
+        }
+
+        .small {
+            /* width: 100px;
+            height: 100px; */
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            text-align: center;
+
+        }
+
+        .small>td {
+            /* vertical-align: middle; */
+            text-align: center;
+        }
+
+        .small:hover .smallbox {
+            visibility: visible;
+        }
+
+        .smallbox {
+            position: absolute;
+            /* width: 100px; */
+            height: 60px;
+            /* padding:0 10px; */
+            border-radius: 10px;
+            white-space: nowrap;
+            background-color: black;
+            color: white;
+            opacity: 0.5;
+            visibility: hidden;
+            line-height: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='box'></div>
+</body>
+<script>
+    // 圆的各个参数
+    let obj = {
+        num: 5, //圆的数量
+        lengthArr: [70, 80, 90], //圆的半径数组
+        textArr: ['圆1', '圆2', '圆3', '圆4', '圆5'], //圆里面的文字数组
+        boxArr: ['圆12', '圆222', '圆3222'], //圆里面的文字数组
+    }
+
+    //用来储存所有圆的数据
+    var cycleTol = [];
+    var box = document.getElementById('box');
+    var boxWidth = box.offsetWidth;
+    console.log(boxWidth);
+
+    obj.lengthArr.forEach(function (e, i) {
+        getOne(e, i)
+    });
+    function getOne(e, i) {
+        var width = e;
+        var height = e;
+        var left = Math.floor(Math.random() * 300);
+        var top = Math.floor(Math.random() * 300);
+        console.log(left, top)
+        var boxLeft = left;
+        var boxTop = top;
+        if (cycleTol.length == 0) {
+            cycleTol.push([e, e, left, top]);
+        } else {
+            var flag = true;
+            for (var i = 0; i < cycleTol.length; i++) {
+                var inArr = cycleTol[i];
+                var preWidth = inArr[0];
+                var preHeight = inArr[1];
+                var preLeft = inArr[2];
+                var preTop = inArr[3];
+
+                var leftNum = Math.abs((left + width / 2) - (preLeft + preWidth / 2))
+                var topNum = Math.abs((top + height / 2) - (preTop + preHeight / 2))
+
+                if ((leftNum < (width + preWidth) / 2 && topNum < (height + preHeight) / 2) || Math.abs(top - preTop) < preHeight) {
+                    flag = false;
+                    getOne(e, i);
+                    break;
+                }
+            }
+            if (flag) {
+                cycleTol.push([obj.lengthArr[i], obj.lengthArr[i], left, top]);
+            }
+        }
+    }
+    function getCycle(cycleArr) {
+        cycleArr.forEach((e, i)=> {
+            var cycle = document.createElement('div');
+            var smallbox = document.createElement('div');
+            var td = document.createElement('span');
+            cycle.className = 'small';
+            smallbox.className = 'smallbox';
+            td.innerText = obj.textArr[i];
+            smallbox.innerText = obj.boxArr[i];
+            cycle.appendChild(td);
+            cycle.appendChild(smallbox);
+            box.appendChild(cycle);
+
+            cycle.style.height = e[0] + 'px';
+            cycle.style.width = e[1] + 'px';
+            cycle.style.left = e[2] + 'px';
+            cycle.style.top = e[3] + 'px';
+            cycle.style.lineHeight = e[0] + 'px';
+
+            var smallboxWidth = smallbox.offsetWidth;
+
+            if (e[2] >= boxWidth / 2) {
+                smallbox.style.left = -smallboxWidth - 5 + 'px';
+            } else {
+                smallbox.style.left = e[1] + 5 + 'px';
+            }
+
+            smallbox.style.top = e[1] / 2 - smallbox.offsetHeight / 2 + 'px';
+        });
+    }
+
+    getCycle(cycleTol)
+</script>
+
+</html>
